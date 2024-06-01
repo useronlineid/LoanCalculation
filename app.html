@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(to right, #1e826a, #1ccdbb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .loan-calculator {
+            width: 400px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            color: #4a4a4a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1b5e20;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #4caf50;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button[type="reset"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button[type="reset"]:hover {
+            background-color: #43a647;
+        }
+
+        .results p {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #1b5e20;
+        }
+
+        .results span {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="loan-calculator">
+        <h1>คำนวณสินเชื่อ</h1>
+        <form id="loanForm">
+            <div class="form-group">
+                <label for="amount">วงเงินกู้:</label>
+                <input type="number" id="amount" placeholder="จำนวนเงิน" list="defaultNumbers1" step="10000" min="50000" max="5000000">
+            </div>
+            <div class="form-group">
+                <label for="rate">ดอกเบี้ยต่อเดือน (0.50%):</label>
+                <input type="number" id="rate" placeholder="อัตราผ่อนชำระ" step=".1">
+            </div>
+            <div class="form-group">
+                <label for="time">ระยะการผ่อนชำระ (เดือน):</label>
+                <input type="number" id="time" placeholder="ระยะเวลายื่นกู้ (เดือน)" list="defaultNumbers" step="12" min="0" max="60">
+                <datalist id="defaultNumbers">
+                    <option value="3"></option>
+                    <option value="6"></option>
+                    <option value="12"></option>
+                    <option value="24"></option>
+                    <option value="36"></option>
+                    <option value="48"></option>
+                    <option value="60"></option>
+                </datalist>
+            </div>
+            <div class="form-group">
+                <button type="reset" id="resetBtn">รีเซ็ต</button>
+            </div>
+        </form>
+        <div class="results">
+            <p>ชำระต่อเดือน: ฿ <span id="output"></span></p>
+            <p>ดอกเบี้ยต่อเดือน: ฿ <span id="output1"></span></p>
+            <p>รวมทั้งหมด: ฿ <span id="output2"></span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountInput = document.getElementById('amount');
+            const rateInput = document.getElementById('rate');
+            const timeInput = document.getElementById('time');
+            const outputMonthly = document.getElementById('output');
+            const outputInterest = document.getElementById('output1');
+            const outputTotal = document.getElementById('output2');
+
+            function calculate() {
+                const amount = parseFloat(amountInput.value);
+                const rate = parseFloat(rateInput.value);
+                const time = parseFloat(timeInput.value);
+
+                if (!isNaN(amount) && !isNaN(rate) && !isNaN(time) && time > 0) {
+                    const interest = (amount * (rate * 0.01)).toFixed(2);
+                    const monthly = ((amount / time) + parseFloat(interest)).toFixed(2);
+                    const total = (monthly * time).toFixed(2);
+
+                    outputMonthly.textContent = numberWithCommas(monthly);
+                    outputInterest.textContent = numberWithCommas(interest);
+                    outputTotal.textContent = numberWithCommas(total);
+                } else {
+                    outputMonthly.textContent = '';
+                    outputInterest.textContent = '';
+                    outputTotal.textContent = '';
+                }
+            }
+
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            amountInput.addEventListener('input', calculate);
+            rateInput.addEventListener('input', calculate);
+            timeInput.addEventListener('input', calculate);
+        });
+    </script>
+</body>
+</html>
